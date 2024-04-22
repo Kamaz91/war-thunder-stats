@@ -1,0 +1,58 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@stores/*": [
+        "./src/stores/*"
+      ],
+      "@services/*": [
+        "./src/services/*"
+      ],
+      "@views/*": [
+        "./src/views/*"
+      ],
+      "@types/*": [
+        "./types/*"
+      ],
+      "@sharedLibs": [
+        "./sharedLibs/*"
+      ]
+    },
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "src",
+    "libs/reportParser.ts",
+    "libs/wikiscrapper.ts",
+    "libs/*.ts",
+    "libs/**/*.ts",
+    "libs/helpers/eventHelpers.ts",
+    "types/*.ts",
+    "electron/main/mailEventList.ts"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
+}
