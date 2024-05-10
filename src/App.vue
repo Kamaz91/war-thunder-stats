@@ -1,17 +1,12 @@
 <script lang="ts">
 import DefaultView from '@views/default.vue';
 
-import '@services/ipc';
-
 import { useSettings } from '@stores/settings';
 import { useVehiclesData } from '@stores/vehiclesData';
 
-import { prepareEvents, registerEvents, getListenersList } from "@/src/rendererEvents";
 import { registerClipboardInterval } from "@/src/clipboard";
 import { sendToMainProcess } from '@/sharedLibs/helpers/eventHelpers';
 import { watchEffect } from 'vue';
-import { ipcRenderer } from 'electron';
-
 export default {
   setup() {
     var Settings = useSettings();
@@ -32,13 +27,8 @@ export default {
     return { Settings, VehiclesData }
   },
   beforeUnmount() {
-    let listeners = getListenersList();
+    Ipc.removeAllListeners();
     console.warn("App unmounting");
-    console.warn("Removing all listeners:");
-    listeners.forEach(listenerName => {
-      console.warn("Listener:", listenerName, "removed");
-      ipcRenderer.removeAllListeners(listenerName);
-    });
   },
   components: { DefaultView },
   data() {
@@ -55,10 +45,6 @@ export default {
   },
 
   async mounted() {
-    // Registering Events
-    prepareEvents();
-    registerEvents();
-
     sendToMainProcess({ name: "get-path", data: "" });
   },
   methods: {
@@ -69,6 +55,7 @@ export default {
     }
   }
 }
+import Ipc from '@services/ipc';
 </script>
 
 <template>

@@ -1,27 +1,17 @@
-import { IpcRendererEvent, ipcRenderer } from "electron";
-import { RendererEvents } from "@/types/events";
+import IPC from "@services/ipc/IpcEvents";
+import reportAddError from "./events/report-add-error";
+import reportAddSuccess from "./events/report-add-success";
+import getPathError from "./events/get-path-error";
+import getPathResponse from "./events/get-path-response";
+import reportsGetAllCallback from "./events/reports-get-all-callback";
+import reportsGetSucess from "./events/reports-get-success";
 
-type EventAction = (event: IpcRendererEvent, data: any) => void;
+IPC.registerEvent("report-add-error", reportAddError);
+IPC.registerEvent("report-add-success", reportAddSuccess);
 
-class IpcEvents {
-    public EventList: Map<RendererEvents, (event: IpcRendererEvent, data: any) => any> = new Map();
+IPC.registerEvent("get-path-response", getPathResponse);
+IPC.registerEvent("get-path-error", getPathError);
 
-    constructor() {
-
-    }
-    registerEvent(event: RendererEvents, action: EventAction) {
-        this.EventList.set(event, action);
-    }
-    getListenersList() {
-        return Array.from(this.EventList.keys());
-    }
-    removeAllListeners() {
-        let listeners = this.getListenersList();
-        listeners.forEach(element => {
-            console.warn("Listener:", element, "removed");
-            ipcRenderer.removeAllListeners(element);
-        });
-    }
-}
-
-export default new IpcEvents();
+IPC.registerEvent("reports-get-all-callback", reportsGetAllCallback);
+IPC.registerEvent("reports-get-success", reportsGetSucess);
+export default IPC;

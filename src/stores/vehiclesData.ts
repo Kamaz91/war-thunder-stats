@@ -17,9 +17,6 @@ export const useVehiclesData = defineStore('vehiclesData', {
         vehicles: [],
         vehiclesMap: new Map()
     }),
-    getters: {
-
-    },
     actions: {
         getDatasetsPath() {
             let settings = useSettings();
