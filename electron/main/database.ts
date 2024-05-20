@@ -77,7 +77,6 @@ export function createDB() {
         t.integer('research_boost', 6);
         t.integer('credits_base', 6);
         t.integer('credits_boost', 6);
-        t.integer('time', 5);
         t.integer('created_at', 15);
 
         t.index(['session_id'], "sid3");

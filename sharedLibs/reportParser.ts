@@ -190,12 +190,14 @@ function extractActivity(inputText: string): Activity[] {
     // Iterate over the lines and group them into objects with 5 elements each
     for (let line of lines) {
         let splited = line.trim().split(regex).filter((item) => item.trim() != '');
-        const time = parseTime(splited[0]);
-        const vehicle = splited[1];
-        const credits = extractBaseAndBoosters(splited[2]);
-        const research = extractBaseAndBoosters(splited[3]);
+        // Check the row length
+        // The update of 15.05.2024 changes the activity of the report by removing the time
+        let index = splited.length < 4 ? 0 : 1;
+        const vehicle = splited[index];
+        const credits = extractBaseAndBoosters(splited[++index]);
+        const research = extractBaseAndBoosters(splited[++index]);
 
-        result.push({ time, vehicle, credits, research });
+        result.push({ vehicle, credits, research });
     }
     return result;
 }

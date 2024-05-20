@@ -17,7 +17,6 @@ export interface BattleActivityDB {
     research_boost: number;
     credits_base: number;
     credits_boost: number;
-    time: number;
     created_at: number;
 }
 export interface CaptureDB {

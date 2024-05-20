@@ -177,8 +177,7 @@ export default async (report: BattleReport) => {
             credits_base: el.credits.base,
             credits_boost: el.credits.boosters,
             research_base: el.research.base,
-            research_boost: el.research.boosters,
-            time: el.time
+            research_boost: el.research.boosters
         })));
     }
     if (basic.damagedVehicles.length > 0) {

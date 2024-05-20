@@ -46,7 +46,7 @@ export interface Awards extends BasicReportInfo {
     award: string;
 }
 
-export interface Activity extends BasicReportInfo {
+export interface Activity extends Ernable {
     vehicle: string;
 }
 
