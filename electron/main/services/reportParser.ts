@@ -1,4 +1,5 @@
-import { Activity, Awards, BasicInfo, BattleReport, Bombing, Capture, DestructionAir, Earned, ExtractedData, HitsAndDestroys, Scouting, TakeoffsLandings, TimePlayed } from '../types/report';
+import { Activity, Awards, BasicInfo, BattleReport, Bombing, Capture, DestructionAir, Earned, ExtractedData, HitsAndDestroys, Scouting, ScoutKills, TakeoffsLandings, TimePlayed } from '../../../types/report';
+
 type SectionName =
     "activity" |
     "assistance" |
@@ -96,9 +97,11 @@ function extractHits(inputText: string): HitsAndDestroys[] {
         let splited = line.trim().split(regex).filter((item) => item.trim() != '');
         const time = parseTime(splited[0]);
         const vehicle = splited[1];
-        const target = splited[2];
-        const credits = extractBaseAndBoosters(splited[3]);
-        const research = extractBaseAndBoosters(splited.length < 5 ? '0' : splited[4]);
+        const ammunition = splited[2];
+        const target = splited[3];
+        const MissionScore = splited[4];
+        const credits = extractBaseAndBoosters(splited[5]);
+        const research = extractBaseAndBoosters(splited.length < 7 ? '0' : splited[6]);
 
         result.push({ time, vehicle, target, credits, research });
     }
@@ -120,10 +123,12 @@ function extractAirKills(inputText: string): DestructionAir[] {
         let splited = line.trim().split(regex).filter((item) => item.trim() != '');
         const time = parseTime(splited[0]);
         const vehicle = splited[1];
-        const target = splited[2];
-        const finishingOff = splited[3];
-        const credits = extractBaseAndBoosters(splited.length <= 4 ? '0' : splited[4]);
-        const research = extractBaseAndBoosters(splited.length <= 5 ? '0' : splited[5]);
+        const ammunition = splited[2];
+        const target = splited[3];
+        const MissionScore = splited[4];
+        const finishingOff = splited[5];
+        const credits = extractBaseAndBoosters(splited.length <= 6 ? '0' : splited[6]);
+        const research = extractBaseAndBoosters(splited.length <= 7 ? '0' : splited[7]);
 
         result.push({ time, vehicle, target, finishingOff, credits, research });
     }
@@ -146,9 +151,36 @@ function extractScoutDamage(inputText: string): Scouting[] {
         const time = parseTime(splited[0]);
         const vehicle = splited[1];
         const target = splited[2];
-        const credits = extractBaseAndBoosters(splited[3]);
+        const points = splited[3];
+        const credits = extractBaseAndBoosters(splited[4]);
 
         result.push({ time, vehicle, target, credits });
+    }
+    return result;
+}
+
+function extractScoutKills(inputText: string): ScoutKills[] {
+    // Define a regular expression to split text based on multiple spaces and line breaks
+    const regex = /(\s{2,})/;
+
+    // Use the regular expression to split the text into an array of lines
+    const lines = inputText.replaceAll("\r\n", "\n").trim().split("\n");
+
+    // Initialize an array to store the result
+    const result: ScoutKills[] = [];
+
+    // Iterate over the lines and group them into objects with 5 elements each
+    for (let line of lines) {
+        let splited = line.trim().split(regex).filter((item) => item.trim() != '');
+        const time = parseTime(splited[0]);
+        const vehicle = splited[1];
+        const target = splited[2];
+        const points = splited[3];
+        const x = splited[4];
+        const credits = extractBaseAndBoosters(splited[5]);
+        const research = extractBaseAndBoosters(splited[6]);
+
+        result.push({ time, vehicle, target, credits, research });
     }
     return result;
 }
@@ -187,9 +219,23 @@ function extractActivity(inputText: string): Activity[] {
     // Initialize an array to store the result
     const result: Activity[] = [];
 
-    // Iterate over the lines and group them into objects with 5 elements each
+    // Iterate over the lines and group them into objects with 3 elements each
     for (let line of lines) {
         let splited = line.trim().split(regex).filter((item) => item.trim() != '');
+
+        if (splited.length < 3) {
+            return [{
+                credits: {
+                    base: 0,
+                    boosters: 0
+                },
+                research: {
+                    base: 0,
+                    boosters: 0
+                },
+                vehicle: splited[0]
+            }];
+        }
         // Check the row length
         // The update of 15.05.2024 changes the activity of the report by removing the time
         let index = splited.length < 4 ? 0 : 1;
@@ -217,9 +263,9 @@ function extractTimePlayed(inputText: string): TimePlayed[] {
         let splited = line.trim().split(regex).filter((item) => item.trim() != '');
 
         const vehicle = splited[0];
-        const percent = parseInt(splited[1]);
-        const time = parseTime(splited[2]);
-        const research = extractBaseAndBoosters(splited[3]);
+        const percent = splited.length < 3 ? 0 : parseInt(splited[1]);
+        const time = splited.length < 3 ? parseTime(splited[1]) : parseTime(splited[2]);
+        const research = splited.length < 3 ? extractBaseAndBoosters("0") : extractBaseAndBoosters(splited[3]);
 
         result.push({ time, vehicle, percent, research });
     }
@@ -270,7 +316,7 @@ function extractBombingBases(inputText: string): Bombing[] {
 
         const time = parseTime(splited[0]);
         const vehicle = splited[1];
-        const TNT = parseInt(splited.length < 6 ? '0' : splited[2]);
+        const TNT = splited.length < 6 ? 0 : parseInt(splited[2]);
         const damage = parseInt(splited[3 + i]);
         const credits = extractBaseAndBoosters(splited[4 + i]);
         const research = extractBaseAndBoosters(splited[5 + i]);
@@ -314,6 +360,7 @@ function extractBasicInfo(inputText: string, date: number): ExtractedData {
     const damagedVehiclesRegex = /Damaged Vehicles: (.*$)/m;
     const otherAwardsRegex = /Other awards\s+(.*)\n/;
     const RewardForWinningRegex = /Reward for winning\s+(.*)\n/;
+    const ExpensesCompensationRegex = /Expenses compensation:\s+(.*)\n/;
     const RewardForparticipateRegex = /Reward for participating in the mission\s+(.*)\n/;
     const battleResultRegex = /(Victory|Defeat)\s.*?\[(.*?)\]\s(.*?)\smission!/;
 
@@ -415,6 +462,11 @@ function extractBasicInfo(inputText: string, date: number): ExtractedData {
         extractedData["RewardForWinning"] = parseInt(RewardForWinningMatch[1].trim());
     }
 
+    const ExpensesCompensation = inputText.match(ExpensesCompensationRegex);
+    if (ExpensesCompensation) {
+        extractedData["ExpensesCompensation"] = parseInt(ExpensesCompensation[1].trim());
+    }
+
     const RewardForparticipateMatch = inputText.match(RewardForparticipateRegex);
     if (RewardForparticipateMatch) {
         extractedData["RewardForMission"] = parseInt(RewardForparticipateMatch[1].trim());
@@ -450,11 +502,11 @@ function processSection(section: Section): { processed: Activity[] | Awards[] | 
         { name: "Critical damage to the enemy", key: "criticalDamage", parse: extractHits },
         { name: "Severe damage to the enemy", key: "severeDamage", parse: extractHits },
         { name: "Destruction of aircraft", key: "destructionAir", parse: extractAirKills },
-        { name: "Destruction of ground vehicles and fleets", key: "destructionGroundAndFleets", parse: extractHits },
+        { name: "Destruction of ground vehicles", key: "destructionGroundAndFleets", parse: extractHits },
         { name: "Damage to the enemy", key: "damage", parse: extractHits },
         { name: "Scouting of the enemy", key: "scouting", parse: extractScoutDamage },
         { name: "Damage taken by scouted enemies", key: "damageToScouted", parse: extractScoutDamage },
-        { name: "Destruction by allies of scouted enemies", key: "destructionOfScouted", parse: (inputString: string) => extractHits(inputString.replaceAll('×', '')) },
+        { name: "Destruction by allies of scouted enemies", key: "destructionOfScouted", parse: extractScoutKills },
         { name: "Time Played", key: "timePlayed", parse: extractTimePlayed },
         { name: "Landings", key: "landings", parse: extractLandingTakeoff },
         { name: "Takeoffs", key: "takeoffs", parse: extractLandingTakeoff },

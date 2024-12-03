@@ -1,3 +1,7 @@
+import { NotifierNotificationType } from "./notifer";
+
+export type RaportStatus = { status: NotifierNotificationType, data: string, message: string };
+
 export interface ExtractedData {
     text: string;
     data: BasicInfo
@@ -82,6 +86,11 @@ export interface Capture extends BasicReportInfo {
 }
 
 export interface Scouting extends Omit<BasicReportInfo, "research"> {
+    vehicle: string;
+    target: string;
+}
+
+export interface ScoutKills extends BasicReportInfo {
     vehicle: string;
     target: string;
 }

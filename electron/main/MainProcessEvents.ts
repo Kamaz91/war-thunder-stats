@@ -1,11 +1,9 @@
 import { app, IpcMainEvent, ipcMain } from "electron";
-import { BattleReport } from "@types/report";
+import { BattleReport } from "../../types/report";
 import addReport from "./addReportDB";
-import { all } from "./getReports";
+import { all, chunk, count, } from "./getReports";
 import { MainProcessEvents } from "../../types/events";
-import { sendToRenderer } from "../../sharedLibs/helpers/eventHelpers";
-import os from "os";
-import path from "path";
+import { sendToRenderer } from "./eventHelpers";
 import { filters } from "../../types/database";
 import { Settings } from "./settings";
 
@@ -13,6 +11,7 @@ const MainProcessEventList: Map<MainProcessEvents, (event: IpcMainEvent, data: a
 
 MainProcessEventList.set("report-add", (event: IpcMainEvent, report: BattleReport) => {
     console.log("Report Id:", report.basicInfo.SessionID);
+
     addReport(report)
         .then(() => sendToRenderer(event, { name: "report-add-success", data: report.basicInfo.SessionID }))
         .catch(e => sendToRenderer(event, { name: "report-add-error", data: report.basicInfo.SessionID }));
@@ -44,12 +43,22 @@ MainProcessEventList.set("get-path", async (event: IpcMainEvent) => {
 });*/
 
 export function register() {
-    MainProcessEventList.forEach((func, eventName) => {
-        console.log("Registering Event:", eventName);
-        ipcMain.on(eventName, (event, data: any) => {
-            console.log("EVENT-GET:", eventName);
-            console.log("Event data:", data);
-            func(event, data);
-        });
+    ipcMain.handle("report/get", async (event, arg) => {
+        if (!arg) {
+            return await all();
+        }
+    });
+    ipcMain.handle("report/get/chunk", async (event, offset: number, limit: number) => {
+        console.log("(report/get/chunk)", offset, limit);
+        return chunk(offset, limit);
+    });
+    ipcMain.handle("report/get/count", async () => {
+        return await count();
+    });
+    ipcMain.handle("report/remove", async (event, arg) => {
+
+    });
+    ipcMain.handle("report/edit", async (event, arg) => {
+
     });
 }

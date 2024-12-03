@@ -1,19 +1,42 @@
 {
   "compilerOptions": {
     "composite": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
     "lib": [
+      "dom",
       "ESNext"
     ],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@electron/*": [
+        "./electron/*"
+      ],
+      "@src/*": [
+        "./src/*"
+      ],
+      "@types/*": [
+        "./types/*"
+      ],
+      "@utils": [
+        "./utils/*"
+      ]
+    },
   },
   "include": [
     "types/*",
     "vite.config.ts",
     "package.json",
     "libs/**/*.ts",
-    "electron"
+    "electron",
+    "utils/*",
+    "src/utils/eventManager.ts",
+    "src/utils/eventManager.ts"
   ]
 }

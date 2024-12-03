@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import { VehiclesDetails, VehiclesDetailsInTime } from '@/types/datasets';
 import { useSettings } from '@stores/settings';
-import fs from "fs";
-import path from 'path';
+//import fs from "fs";
+//import path from 'path';
 import { filters } from '@/types/database';
 
 interface State {
@@ -39,19 +39,19 @@ export const useVehiclesData = defineStore('vehiclesData', {
                     resolve(data);
                 };
 
-                fs.readFile(path.resolve(this.getDatasetsPath(), file), 'utf8', x);
+                //fs.readFile(path.resolve(this.getDatasetsPath(), file), 'utf8', x);
             });
             return JSON.parse(reader);
 
         },
         async loadDatasets() {
             this.loading = "reading";
-            let files = fs.readdirSync(this.getDatasetsPath());
-            for (const file of files) {
-                let dataset = await this.loadDataset(file);
-                let date = this.parseToDate(file.replace(".json", ""));
-                this.setDatasetMap(dataset, date);
-            }
+            //let files = fs.readdirSync(this.getDatasetsPath());
+            // for (const file of files) {
+            //     let dataset = await this.loadDataset(file);
+            //     let date = this.parseToDate(file.replace(".json", ""));
+            //     this.setDatasetMap(dataset, date);
+            // }
             this.loading = "done";
         },
         setDatasetMap(dataset: VehiclesDetails[], time: number) {

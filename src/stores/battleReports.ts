@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { extractReportSummary } from '@/sharedLibs/reportParser';
+//import { extractReportSummary } from '@/sharedLibs/reportParser';
 import { BattleReport } from '@/types/report';
 
 type filter = "today" | "yesterday" | "week" | "30days" | "all";
@@ -31,15 +31,15 @@ export const useBattleReports = defineStore('BattleReports', {
             var wins = 0, battles = 0, killsAir = 0, killsGroundNavy = 0, credits = 0, research = 0, spawns = 0, deaths = 0;
 
             state.filteredReports.forEach((report) => {
-                let ex = extractReportSummary(report);
-                wins += ex.win ? 1 : 0;
-                battles += 1;
-                killsAir += ex.killsAir;
-                killsGroundNavy += ex.killsGroundNavy;
-                credits += ex.credits;
-                research += ex.research;
-                deaths += ex.deaths;
-                spawns += ex.spawns;
+                //let ex = extractReportSummary(report);
+                // wins += ex.win ? 1 : 0;
+                // battles += 1;
+                // killsAir += ex.killsAir;
+                // killsGroundNavy += ex.killsGroundNavy;
+                // credits += ex.credits;
+                // research += ex.research;
+                // deaths += ex.deaths;
+                // spawns += ex.spawns;
             });
 
             return { wins, battles, killsAir, killsGroundNavy, credits, research, deaths, spawns };

@@ -16,7 +16,7 @@
 
 <script lang="ts">
 
-import { clearInterval, setInterval } from "node:timers"
+//import { clearInterval, setInterval } from "node:timers"
 import type { PropType } from 'vue'
 import { useNotifier } from '@stores/notifier'
 import { NotifierNotification } from '@/types/notifer';

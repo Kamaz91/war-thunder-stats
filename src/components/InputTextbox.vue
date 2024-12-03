@@ -6,8 +6,8 @@
 <script lang="ts">
 import { mapActions } from 'pinia'
 import { useBattleReports } from '@stores/battleReports'
-import { parseReport } from "@/sharedLibs/reportParser";
-import { ipcRenderer } from 'electron';
+//import { parseReport } from "@/sharedLibs/reportParser";
+//import { ipcRenderer } from 'electron';
 import { BattleReport } from '@/types/report';
 
 export default {
@@ -48,27 +48,27 @@ export default {
             }
             console.log(date);
 
-            const extracted = parseReport(inputText, date.getTime());
+            // const extracted = parseReport(inputText, date.getTime());
 
-            if (extracted == null) {
-                console.log("Cant Parse report");
-                return;
-            }
+            // if (extracted == null) {
+            //     console.log("Cant Parse report");
+            //     return;
+            // }
 
-            if (extracted.basicInfo.SessionID == '' || extracted.basicInfo.Battle.result == '') {
-                return;
-            }
+            // if (extracted.basicInfo.SessionID == '' || extracted.basicInfo.Battle.result == '') {
+            //     return;
+            // }
 
-            if (!this.hasReport(extracted.basicInfo.SessionID)) {
-                console.log(extracted);
-                this.sendReportToDB(extracted);
-                this.addBattleReport(extracted);
-            } else {
-                console.log("Battle raport already exists:", extracted.basicInfo.SessionID);
-            }
+            // if (!this.hasReport(extracted.basicInfo.SessionID)) {
+            //     console.log(extracted);
+            //     this.sendReportToDB(extracted);
+            //     this.addBattleReport(extracted);
+            // } else {
+            //     console.log("Battle raport already exists:", extracted.basicInfo.SessionID);
+            // }
         },
         sendReportToDB(report: BattleReport) {
-            ipcRenderer.send("report-add", report);
+            //ipcRenderer.send("report-add", report);
         },
         ...mapActions(useBattleReports, ['addBattleReport', 'hasReport'])
     }

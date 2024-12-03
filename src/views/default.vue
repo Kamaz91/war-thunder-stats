@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import Notifier from '@components/notifier/notifier.vue';
 import BattleReportsList from '@components/reports/reports.vue';
 import ResearchBox from '@components/ResearchBox.vue';
 import InputTextbox from '@components/InputTextbox.vue';
@@ -12,7 +11,6 @@ import Filters from '@components/Filters.vue';
 <template>
     <!--<Debug></Debug>-->
     <div class="grid-menu">
-        <Notifier></Notifier>
         <SideMenu></SideMenu>
         <div>
             <Filters></Filters>

@@ -1,0 +1,5 @@
+zrobić nowy system parsowania
+
+wprowadzić szablony dla różnych trybów gry Arcade,Realistic,Simulator Ground,Air,Naval
+- szablony powinny zawierać rozpiskę pożądanych wartości aby można było określić czy dane się zgadzają
+- z raportu powinny być usówane sprawdzone linie i jeśli coś zostanie powinien zostać wyświetlony komunikat proszący o sprawdzenie

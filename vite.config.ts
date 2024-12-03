@@ -7,6 +7,7 @@ import { notBundle } from 'vite-plugin-electron/plugin';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import pkg from './package.json';
 import path from "path";
+import { fileURLToPath } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
@@ -15,8 +16,12 @@ export default defineConfig(({ command }) => {
   const isServe = command === 'serve'
   const isBuild = command === 'build'
   const sourcemap = isServe || !!process.env.VSCODE_DEBUG
+  const sequelizeExclude = ["@sequelize/snowflake", "@sequelize/db2", "@sequelize/postgres", "@sequelize/mssql", "@sequelize/mysql", "@sequelize/mariadb", "@sequelize/db2-ibmi"];
 
   return {
+    optimizeDeps: {
+      exclude: sequelizeExclude
+    },
     resolve: {
       alias: [
         { find: '@', replacement: path.resolve(__dirname, './') },
@@ -52,7 +57,7 @@ export default defineConfig(({ command }) => {
                 // we can use `external` to exclude them to ensure they work correctly.
                 // Others need to put them in `dependencies` to ensure they are collected into `app.asar` after the app is built.
                 // Of course, this is not absolute, just this way is relatively simple. :)
-                external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
+                external: [...sequelizeExclude, ...Object.keys('dependencies' in pkg ? pkg.dependencies : {})],
               },
             },
             plugins: [
@@ -75,7 +80,7 @@ export default defineConfig(({ command }) => {
               minify: isBuild,
               outDir: 'dist-electron/preload',
               rollupOptions: {
-                external: Object.keys('dependencies' in pkg ? pkg.dependencies : {}),
+                external: ["electron", ...sequelizeExclude, ...Object.keys('dependencies' in pkg ? pkg.dependencies : {})],
               },
             },
             plugins: [

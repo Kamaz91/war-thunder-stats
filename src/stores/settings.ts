@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import ph from "path"
+//import ph from "path"
 
 type DataState = "initial" | "loading" | "loaded";
 
@@ -50,7 +50,7 @@ export const useSettings = defineStore('settings', {
             this.states.configDir = "loading";
             this.configDir = path;
             this.states.configDir = "loaded";
-            this.setDatasetsPath(ph.resolve(path, "datasets", "vehicles"));
+            //this.setDatasetsPath(ph.resolve(path, "datasets", "vehicles"));
         },
         setView(viewName: string) {
             this.states.view = "loading";

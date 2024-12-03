@@ -1,3 +1,5 @@
+import "./contextBridge";
+
 function domReady(condition: DocumentReadyState[] = ['complete', 'interactive']) {
   return new Promise((resolve) => {
     if (condition.includes(document.readyState)) {
@@ -84,6 +86,9 @@ function useLoading() {
 
 const { appendLoading, removeLoading } = useLoading()
 domReady().then(appendLoading)
+domReady().then(() => {
+
+})
 
 window.onmessage = (ev) => {
   ev.data.payload === 'removeLoading' && removeLoading()

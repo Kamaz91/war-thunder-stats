@@ -4,19 +4,10 @@ import { join } from 'node:path';
 import os from "os";
 import path from "path";
 import { Settings } from "./settings";
-
+import Database from "./services/sequelize";
+import { registerClipboardInterval } from './services/clipboard';
 import * as Events from '../main/MainProcessEvents';
 
-// The built directory structure
-//
-// ├─┬ dist-electron
-// │ ├─┬ main
-// │ │ └── index.js    > Electron-Main
-// │ └─┬ preload
-// │   └── index.js    > Preload-Scripts
-// ├─┬ dist
-// │ └── index.html    > Electron-Renderer
-//
 process.env.DIST_ELECTRON = join(__dirname, '..')
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist')
 process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
@@ -54,11 +45,11 @@ async function createWindow() {
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
       // Consider using contextBridge.exposeInMainWorld
       // Read more on https://www.electronjs.org/docs/latest/tutorial/context-isolation
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
       devTools: true,
     },
-  })
+  });
 
   if (process.env.VITE_DEV_SERVER_URL) { // electron-vite-vue#298
     win.loadURL(url)
@@ -77,11 +68,12 @@ async function createWindow() {
   win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https:')) shell.openExternal(url)
     return { action: 'deny' }
-  })
+  });
+  return win;
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 }
 
-app.whenReady().then(createWindow).then(async () => {
+app.whenReady().then(createWindow).then(async (window) => {
   const platform = os.platform();
   let appDataPath = '';
 
@@ -95,10 +87,12 @@ app.whenReady().then(createWindow).then(async () => {
 
   //Register MainIPC events
   Events.register();
+  registerClipboardInterval(window.webContents);
 
   try {
     Settings.setAppDataPath(appDataPath);
     Settings.ConfigureDatabase();
+    InitDatabase()
   } catch (error) {
     console.error("Error while loading Settings");
   }
@@ -131,8 +125,8 @@ ipcMain.handle('open-win', (_, arg) => {
   const childWindow = new BrowserWindow({
     webPreferences: {
       preload,
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
     },
   })
 
@@ -142,3 +136,8 @@ ipcMain.handle('open-win', (_, arg) => {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
 })
+
+async function InitDatabase() {
+  Database.init(Settings.getAppDataPath());
+  await Database.connect();
+}
