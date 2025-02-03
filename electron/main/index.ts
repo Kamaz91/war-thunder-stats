@@ -6,7 +6,7 @@ import path from "path";
 import { Settings } from "./settings";
 import Database from "./services/sequelize";
 import { registerClipboardInterval } from './services/clipboard';
-import * as Events from '../main/MainProcessEvents';
+import { RegisterEvents } from "./services/events/";
 
 process.env.DIST_ELECTRON = join(__dirname, '..')
 process.env.DIST = join(process.env.DIST_ELECTRON, '../dist')
@@ -86,7 +86,7 @@ app.whenReady().then(createWindow).then(async (window) => {
   }
 
   //Register MainIPC events
-  Events.register();
+  RegisterEvents();
   registerClipboardInterval(window.webContents);
 
   try {

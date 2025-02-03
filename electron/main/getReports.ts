@@ -206,7 +206,7 @@ export async function all(): Promise<BattleReport[]> {
 }
 
 export function count() {
-    return getTable('reports').count<Record<string, number>>({ count: "id" }).then((val) => val[0]);
+    return getTable('reports').count<Record<string, any>>({ count: "id" }).then((val) => val[0].count);
 }
 
 export async function chunk(offset: number, limit: number): Promise<BattleReport[]> {

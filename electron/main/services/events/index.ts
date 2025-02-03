@@ -1,13 +1,11 @@
-import { ipcMain } from "electron/main";
+import report from "./report";
+import reports from "./reports";
+import clipboard from "./clipboard";
+import utils from "./utils";
 
-ipcMain.emit("test", "testing");
-
-ipcMain.handle("reports/add", (event, data: number) => {
-    console.log("reports/add Handle");
-    data + data
-});
-
-ipcMain.handle("clipboard/toggle", (event, data: number) => {
-    console.log("clipboard/toggle");
-    return false;
-})
+export function RegisterEvents() {
+    report();
+    reports();
+    clipboard();
+    utils();
+}

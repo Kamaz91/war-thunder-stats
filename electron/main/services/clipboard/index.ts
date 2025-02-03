@@ -1,4 +1,5 @@
 import { clipboard } from "electron";
+import { setInterval, clearInterval } from "node:timers";
 import { parseReport } from "../reportParser"
 import { getReport } from "../../getReports";
 import addReport from "../../addReportDB";
@@ -9,11 +10,12 @@ import path from "path";
 
 var clipboardContent = "";
 var clipboardInterval = null;
+var isEnabled = true;
 
 export function registerClipboardInterval(webcontents: Electron.WebContents) {
     clipboardInterval = setInterval(() => {
         let newContents = clipboard.readText();
-        if (isNewData(newContents)) {
+        if (isNewData(newContents) && isEnabled) {
             processClipboard(webcontents, newContents);
         }
     }, 200);
@@ -41,7 +43,6 @@ async function processClipboard(webcontents: Electron.WebContents, inputText: st
         return;
     }
 
-
     if (extracted.basicInfo.SessionID.length == 0 || extracted.basicInfo.Battle.result.length == 0) {
         console.log("Battle raport is not valid");
         webcontents.send("report/added/status", { status: "warning", data: "", message: "Battle raport is not valid" });
@@ -57,7 +58,7 @@ async function processClipboard(webcontents: Electron.WebContents, inputText: st
 
     } else {
         console.log("Battle raport already exists:", extracted.basicInfo.SessionID);
-        webcontents.send("report/added/status", { status: "warning", data: "", message: "Battle raport already exists: " + extracted.basicInfo.SessionID });
+        webcontents.send("report/added/status", { status: "warning", data: "Session: " + extracted.basicInfo.SessionID, message: "Battle raport already exists" });
     }
 }
 
@@ -74,4 +75,9 @@ async function saveReport(report: string, session_id) {
         .then(() => console.log("Report write success"))
         .catch(er => console.log(er))
     console.log(appdata, dir, fileName);
+}
+
+export function toggleClipboard() {
+    isEnabled = !isEnabled;
+    return isEnabled;
 }

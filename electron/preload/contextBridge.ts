@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { EventTaskManager } from "../../utils/eventManager";
 import { BattleReport, RaportStatus } from '../../types/report';
+import { Reports, Report, Utility } from "../../types/eventsList"
 
 var ReceiveManager: EventTaskManager<{ x: String }> = new EventTaskManager("test");
 var RaportManager: EventTaskManager<BattleReport> = new EventTaskManager("report/added");
@@ -17,9 +18,17 @@ contextBridge.exposeInMainWorld('Api', {
         ipcRenderer.send(channel, data);
     },
     report: {
-        get: async (filters?) => ipcRenderer.invoke("report/get", filters),
-        getChunk: async (offset: number, limit: number) => ipcRenderer.invoke("report/get/chunk", offset, limit),
-        count: async () => ipcRenderer.invoke("report/get/count"),
+        get: async (filters?) => ipcRenderer.invoke(Report.Get, filters),
+        delete: async (session: string) => ipcRenderer.invoke(Report.Delete, session)
+    },
+    reportArray: {
+        getChunk: async (offset: number, limit: number) => ipcRenderer.invoke(Reports.GetChunk, offset, limit),
+        getPeriod: async (startTime: number, endTime: number) => ipcRenderer.invoke(Reports.GetPeriod, startTime, endTime),
+        count: async () => ipcRenderer.invoke(Reports.GetCount),
+        delete: async (sessionArray: string[]) => ipcRenderer.invoke(Reports.Delete, sessionArray)
+    },
+    utility: {
+        getDataPath: async () => ipcRenderer.invoke(Utility.GetPath)
     },
     listener: {
         test: {
@@ -31,7 +40,6 @@ contextBridge.exposeInMainWorld('Api', {
         Raport: {
             addTask: (key: string, callback: (event: any, data: BattleReport) => void) => {
                 return RaportManager.addTask(key, callback);
-
             },
             removeTask: (name: string) => {
                 return RaportManager.removeTask(name);
