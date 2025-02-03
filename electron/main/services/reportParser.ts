@@ -465,6 +465,12 @@ function extractBasicInfo(inputText: string, date: number): ExtractedData {
     const ExpensesCompensation = inputText.match(ExpensesCompensationRegex);
     if (ExpensesCompensation) {
         extractedData["ExpensesCompensation"] = parseInt(ExpensesCompensation[1].trim());
+        // Hotfix for 
+        if (extractedData["ExpensesCompensation"] >= extractedData["vehiclesRepair"]) {
+            extractedData["vehiclesRepair"] = 0;
+        } else {
+            extractedData["vehiclesRepair"] = extractedData["vehiclesRepair"] - extractedData["ExpensesCompensation"];
+        }
     }
 
     const RewardForparticipateMatch = inputText.match(RewardForparticipateRegex);
